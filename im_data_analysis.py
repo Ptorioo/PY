@@ -9,7 +9,7 @@ from datetime import *
 from sklearn.preprocessing import LabelEncoder
 from sklearn import tree
 
-file_path = r'C:\PY\dtree.png'
+file_path = 'dtree.png'
 if os.path.isfile(file_path):
     os.remove(file_path)
     print('Removed existing output file "dtree.png"')
@@ -63,6 +63,6 @@ print('Successfully fits data into decision tree ...')
 
 tree.export_graphviz(status_dtree, out_file = "tree.dot", max_depth = 5, feature_names = [str('TotalSalesAmount'), str('TotalPrice'), str('TotalDiscount'), str('TotalPromotionDiscount')])
 system("dot -Tpng tree.dot -o dtree.png")
-os.remove(r'C:\PY\tree.dot')
+os.remove('tree.dot')
 
 print('Successfully exported dtree.png ...')
