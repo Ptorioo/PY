@@ -7,17 +7,9 @@ import os
 from os import system
 from datetime import *
 from sklearn.preprocessing import LabelEncoder
-from sklearn import tree
-
-file_path = 'dtree.png'
-if os.path.isfile(file_path):
-    os.remove(file_path)
-    print('Removed existing output file "dtree.png"')
-
-file_path = 'tree.dot'
-if os.path.isfile(file_path):
-    os.remove(file_path)
-    print('Removed existing output file "tree.dot"')
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import LinearSVC
+from sklearn.metrics import accuracy_score
 
 le = LabelEncoder()
 
@@ -47,29 +39,45 @@ print('Successfully read in file : C:\PY\Data\91APP_OrderData.csv ...')
 df_2 = df_2.drop('UnifiedUserId', axis = 1)
 df_2 = df_2.drop('MemberId', axis = 1)
 df_2 = df_2.drop('TradesGroupCode', axis = 1)
+df_2 = df_2.drop('OrderDateTime', axis = 1)
+
+print('Successfully dropped columns ...')
+
 df_2['ChannelType'] = le.fit_transform(df_2['ChannelType'])
+df_2['ChannelDetail'] = le.fit_transform(df_2['ChannelDetail'])
 df_2['PaymentType'] = le.fit_transform(df_2['PaymentType'])
 df_2['ShippingType'] = le.fit_transform(df_2['ShippingType'])
 df_2['StatusDef'] = le.fit_transform(df_2['StatusDef'])
 
 print('Successfully encoded dataframe ...')
 
-df_2['TotalSalesAmount'],_ = pd.factorize(df_2['TotalSalesAmount'])
-df_2['TotalPrice'],_ = pd.factorize(df_2['TotalPrice'])
-df_2['TotalDiscount'],_ = pd.factorize(df_2['TotalDiscount'])
-df_2['TotalPromotionDiscount'],_ = pd.factorize(df_2['TotalPromotionDiscount'])
-df_2['StatusDef'],uniques = pd.factorize(df_2['StatusDef'])
+lens = len(df_2.index)
 
-x_train = df_2[['TotalSalesAmount', 'TotalPrice', 'TotalDiscount', 'TotalPromotionDiscount']]
-y_train = df_2[['StatusDef']]
+x_train = df_2.drop('StatusDef', axis = 1)
+y_train = df_2['StatusDef']
 
-dtree = tree.DecisionTreeClassifier()
-status_dtree = dtree.fit(x_train, y_train)
+x_train = x_train.drop(df_2.index[int(round(lens/5, 0)) : lens])
+y_train = y_train.drop(df_2.index[int(round(lens/5, 0)) : lens])
+x_test = df_2.drop(df_2.index[ : int(round(lens/5, 0))])
+x_test = x_test.drop('StatusDef', axis = 1)
 
-print('Successfully fits data into decision tree ...')
+print('Successfully splitted train data & test data ...')
 
-tree.export_graphviz(status_dtree, out_file = "tree.dot", max_depth = 7, feature_names = [str('TotalSalesAmount'), str('TotalPrice'), str('TotalDiscount'), str('TotalPromotionDiscount')], filled = True, proportion = True, rotate = True, rounded = True)
-system("dot -Tpng tree.dot -o dtree.png")
-os.remove('tree.dot')
+# The rest is garbage !!!
+#---------------------------------------------------------------
+#
+# sc = StandardScaler()
+# x_train = sc.fit_transform(x_train)
+# x_test = sc.fit_transform(x_test)
+# ^^ Maybe useful but I don't know... ?
 
-print('Successfully exported dtree.png ...')
+# classifier = LinearSVC()
+# classifier.fit(x_train, y_train)
+#
+# print('Model fitted ...')
+#
+# y_pred = classifier.predict(x_test)
+#
+# classifier.score(x_train, y_train)
+# score = round(classifier.score(x_train, y_train) * 100, 2)
+# print(score)
