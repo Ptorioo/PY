@@ -10,3 +10,7 @@ Data analysis for IM project.
 4. 確認你有下載91APP的csv在以下路徑： C:/PY/Data/ (對不起 GitHub 無法 Push ... 三個字，超級可悲)
 5. 接著點開run.bat就可以執行程式
 6. 最後會匯出一個 "dtree.png"
+
+## 如何在 Visual Studio/Visual Studio Code 執行程式：
+- 按 Ctrl + `
+- 輸入 ".\run.bat" 不加引號
