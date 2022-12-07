@@ -7,6 +7,6 @@ Data analysis for IM project.
  - 在PATH選擇"Add Graphviz to the system PATH for all users"
  - 其它不用管
 3. 點開init.bat (執行一次就好，之後都不用再執行)
-4. 確認你有下載91APP的csv在以下路徑： C:/PY/Data/ (對不起 Python 無法 Push ... 三個字，超級可悲)
+4. 確認你有下載91APP的csv在以下路徑： C:/PY/Data/ (對不起 GitHub 無法 Push ... 三個字，超級可悲)
 5. 接著點開run.bat就可以執行程式
 6. 最後會匯出一個 "dtree.png"
