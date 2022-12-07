@@ -14,6 +14,11 @@ if os.path.isfile(file_path):
     os.remove(file_path)
     print('Removed existing output file "dtree.png"')
 
+file_path = 'tree.dot'
+if os.path.isfile(file_path):
+    os.remove(file_path)
+    print('Removed existing output file "tree.dot"')
+
 le = LabelEncoder()
 
 '''
@@ -61,7 +66,7 @@ status_dtree = dtree.fit(x_train, y_train)
 
 print('Successfully fits data into decision tree ...')
 
-tree.export_graphviz(status_dtree, out_file = "tree.dot", max_depth = 6, feature_names = [str('TotalSalesAmount'), str('TotalPrice'), str('TotalDiscount'), str('TotalPromotionDiscount')], filled = True, proportion = True, rotate = True, rounded = True)
+tree.export_graphviz(status_dtree, out_file = "tree.dot", max_depth = 7, feature_names = [str('TotalSalesAmount'), str('TotalPrice'), str('TotalDiscount'), str('TotalPromotionDiscount')], filled = True, proportion = True, rotate = True, rounded = True)
 system("dot -Tpng tree.dot -o dtree.png")
 os.remove('tree.dot')
 
