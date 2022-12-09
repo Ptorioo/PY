@@ -7,8 +7,7 @@ import os
 from os import system
 from datetime import *
 from sklearn.preprocessing import LabelEncoder
-from sklearn.preprocessing import StandardScaler
-from sklearn.svm import LinearSVC
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 
 le = LabelEncoder()
@@ -63,25 +62,13 @@ x_test = x_test.drop('StatusDef', axis = 1)
 
 print('Successfully splitted train data & test data ...')
 
-# print(x_train)
+randomForestModel = RandomForestClassifier(n_estimators = 100, criterion = 'gini')
+randomForestModel.fit(x_train, y_train)
 
-# The rest is garbage !!!
-#---------------------------------------------------------------
-#
-# sc = StandardScaler()
-# x_train = sc.fit_transform(x_train)
-# x_test = sc.fit_transform(x_test)
-# ^^ Maybe useful but I don't know... ?
+print('Model Fitted')
 
-# classifier = LinearSVC()
-# classifier.fit(x_train, y_train)
+y_pred = randomForestModel.predict(x_test)
 
-print("Ling-Chieh Kung")
-#
-# print('Model fitted ...')
-#
-# y_pred = classifier.predict(x_test)
-#
-# classifier.score(x_train, y_train)
-# score = round(classifier.score(x_train, y_train) * 100, 2)
-# print(score)
+randomForestModel.score(x_train, y_train)
+score = round(randomForestModel.score(x_train, y_train) * 100, 2)
+print(score)
