@@ -2,69 +2,145 @@
 
 import numpy as np
 import pandas as pd
-import time
 import os
 from os import system
-from datetime import *
+from datetime import datetime, date
 from sklearn.preprocessing import LabelEncoder
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 
-le = LabelEncoder()
+def rem_time(d):
+    s = ''
+    s = str(d.year) + '/' + str(d.month) + '/' + str(d.day)
+    return s
 
-def string_to_datetime(date_string) :
-	date_time = datetime.strptime(date_string, '%y%m/%d %H:%M:%S')
-	return date_time.Ticks
-'''
-upload_1 = pd.read_csv(r'C:\PY\Data\91APP_MemberData.csv', low_memory = False)
+def string_to_days_from_now(date_string) :
+	try :
+		date_time = datetime.strptime(date_string, '%Y/%m/%d %H:%M')
+		date_time = datetime.strptime(rem_time(date_time), '%Y/%m/%d')
+		now = datetime(2022, 12, 10)
+		subtract = now - date_time
+		return subtract.days
+	except :
+		return 0
 
-df_1 = pd.DataFrame(upload_1)
-df_1['UnifiedUserId'] = le.fit_transform(df_1['UnifiedUserId'])
-df_1['MemberId'] = le.fit_transform(df_1['MemberId'])
-df_1['Gender'] = le.fit_transform(df_1['Gender'])
-df_1['RegisterSourceTypeDef'] = le.fit_transform(df_1['RegisterSourceTypeDef'])
-df_1['APPRefereeId'] = le.fit_transform(df_1['APPRefereeId'])
-df_1['APPRefereeLocationId'] = le.fit_transform(df_1['APPRefereeLocationId'])
-df_1['CountryAliasCode'] = le.fit_transform(df_1['CountryAliasCode'])
-'''
+def string_to_days_from_now2(date_string) :
+	try : 
+		date_time = datetime.strptime(date_string, '%Y/%m/%d')
+		now = datetime(2022, 12, 10)
+		subtract = now - date_time
+		return subtract.days / 365
+	except : 
+		return 0
 
-upload_2 = pd.read_csv(r'C:\PY\Data\91APP_OrderData.csv', low_memory = False)
+def string_to_days_from_now3(date_string) :
+	try : 
+		date_time = datetime.strptime(date_string, '%Y/%m/%d')
+		now = datetime(2022, 12, 10)
+		subtract = now - date_time
+		return subtract.days
+	except : 
+		return 0
 
-upload_2 = upload_2.fillna('0')
+def convert_channel_type(_string) : 
+	if _string == 'OfficialECom' : 
+		return 0
+	elif _string == 'Mall': 
+		return 1
+	elif _string == 'Pos' : 
+		return 2
+	elif _string == 'LocationWizard' : 
+		return 3
+	else : 
+		return 4
+
+def convert_channel_detail(_string) : 
+	if _string == 'DesktopOfficialWeb' : 
+		return 0
+	elif _string == 'MobileWeb': 
+		return 1
+	elif _string == 'iOSApp' : 
+		return 2
+	elif _string == 'AndroidApp' : 
+		return 3
+	else : 
+		return 4
+
+def convert_payment_type(_string) : 
+		types = { 'CreditCardOnce' : 0, 'CreditCardInstallment' : 1, 'ATM' : 2, 'Family' : 3, 'HiLife' : 4, 'SevenEleven' : 5, 'ApplePay' : 6, 'LinePay' : 7, 'GooglePay' : 8, 'JKOPay' : 9, 'Aftee' : 10, 'EasyWallet' : 11, '0' : 12}
+		for i in types : 
+			if _string == i: 
+				return types[i]
+
+def convert_shipping_type(_string) : 
+		types = { 'Family' : 0, 'FamilyPickup' : 1, 'HiLife' : 2, 'Family' : 3, 'HiLife' : 4, 'HiLifePickup' : 5, 'SevenEleven' : 6, 'SevenElevenPickup' : 7, 'Home' : 8, 'Oversea' : 9, '0' : 10}
+		for i in types : 
+			if _string == i: 
+				return types[i]
+
+def convert_register_source_type(_string) : 
+		types = { 'AndroidApp' : 0, 'iOSApp' : 1, 'Web' : 2, 'Store' : 3, 'LocationWizard' : 4, '0' : 5}
+		for i in types : 
+			if _string == i: 
+				return types[i]
+
+upload = pd.read_csv(r'C:\PY\Data\91APP_CombinedData.csv', low_memory = False)
+upload = upload.fillna('0')
 
 statusDef = {'Return' : 0, 'Finish' : 1, 'New' : 1, 'Cancel' : 0, 'Fail' : 0, 'Overdue' : 0, 'Shipping' : 1}
-upload_2.StatusDef = [statusDef[item] for item in upload_2.StatusDef]
-df_2 = pd.DataFrame(upload_2)
+upload.StatusDef = [statusDef[item] for item in upload.StatusDef]
 
-print('Successfully read in file : C:\PY\Data\91APP_OrderData.csv ...')
+df = pd.DataFrame(upload)
 
-df_2 = df_2.drop('UnifiedUserId', axis = 1)
-df_2 = df_2.drop('MemberId', axis = 1)
-df_2 = df_2.drop('TradesGroupCode', axis = 1)
-# df_2 = df_2.drop('OrderDateTime', axis = 1)
+print('Successfully read in file : C:\PY\Data\91APP_CombinedData.csv ...')
 
-print(string_to_datetime(str(df_2['OrderDateTime'])))
-'''
+df = df.drop('UnifiedUserId', axis = 1)
+df = df.drop('MemberId', axis = 1)
+df = df.drop('TradesGroupCode', axis = 1)
+df = df.drop('APPRefereeId', axis = 1)
+df = df.drop('APPRefereeLocationId', axis = 1)
+df = df.drop('Gender', axis = 1)
 
 print('Successfully dropped columns ...')
-print(df_2.columns.values)
 
-df_2['ChannelType'] = le.fit_transform(df_2['ChannelType'])
-df_2['ChannelDetail'] = le.fit_transform(df_2['ChannelDetail'])
-df_2['PaymentType'] = le.fit_transform(df_2['PaymentType'])
-df_2['ShippingType'] = le.fit_transform(df_2['ShippingType'])
-df_2['StatusDef'] = le.fit_transform(df_2['StatusDef'])
+df['OrderDateTime'] = df['OrderDateTime'].map(lambda x : string_to_days_from_now(str(x)))
+df['Birthday'] = df['Birthday'].map(lambda x : string_to_days_from_now2(str(x)))
+df['FirstAppOpenDateTime'] = df['FirstAppOpenDateTime'].map(lambda x : string_to_days_from_now3(str(x)))
+df['LastAppOpenDateTime'] = df['LastAppOpenDateTime'].map(lambda x : string_to_days_from_now3(str(x)))
+df['RegisterDateTime'] = df['RegisterDateTime'].map(lambda x : string_to_days_from_now3(str(x)))
+df['ChannelDetail'] = df['ChannelDetail'].map(lambda x : convert_channel_detail(str(x)))
+df['PaymentType'] = df['PaymentType'].map(lambda x : convert_payment_type(str(x)))
+df['ChannelType'] = df['ChannelType'].map(lambda x : convert_channel_type(str(x)))
+df['ShippingType'] = df['ShippingType'].map(lambda x : convert_shipping_type(str(x)))
+df['RegisterSourceTypeDef'] = df['RegisterSourceTypeDef'].map(lambda x : convert_register_source_type(str(x)))
+df['AppUsingDuration'] = df['FirstAppOpenDateTime'] - df['LastAppOpenDateTime']
+
+print('Successfully converted data ...')
+
+le = LabelEncoder()
+
+df['IsAppInstalled'] = le.fit_transform(df['IsAppInstalled'])
+df['IsEnableEmail'] = le.fit_transform(df['IsEnableEmail'])
+df['IsEnablePushNotification'] = le.fit_transform(df['IsEnablePushNotification'])
+df['IsEnableShortMessage'] = le.fit_transform(df['IsEnableShortMessage'])
+df['CountryAliasCode'] = le.fit_transform(df['CountryAliasCode'])
 
 print('Successfully encoded dataframe ...')
 
-lens = len(df_2.index)
+df['Birthday'] = df['Birthday'].replace(0, np.NaN)
+bd = df['Birthday'].mean()
+df['Birthday'] = df['Birthday'].fillna(bd)
 
-x_train = df_2.drop('StatusDef', axis = 1)
-y_train = df_2['StatusDef']
+print('Successfully processed birthday')
 
-x_train = x_train.drop(df_2.index[int(round(2 * lens / 3, 0)) : lens])
-y_train = y_train.drop(df_2.index[int(round(2 * lens / 3, 0)) : lens])
-x_test = df_2.drop(df_2.index[ : int(round(2 * lens / 3, 0))])
+lens = len(df.index)
+
+x_train = df.drop('StatusDef', axis = 1)
+y_train = df['StatusDef']
+
+x_train = x_train.drop(df.index[int(round(2 * lens / 3, 0)) : lens])
+y_train = y_train.drop(df.index[int(round(2 * lens / 3, 0)) : lens])
+x_test = df.drop(df.index[ : int(round(2 * lens / 3, 0))])
 y_test = x_test['StatusDef']
 x_test = x_test.drop('StatusDef', axis = 1)
 
@@ -79,6 +155,3 @@ pred = randomForestModel.predict(x_train)
 
 print(round(randomForestModel.score(x_train, y_train) * 100, 2))
 print(round(randomForestModel.score(x_test, y_test) * 100, 2))
-print(randomForestModel.feature_importances_)
-
-'''
