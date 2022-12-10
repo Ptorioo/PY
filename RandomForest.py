@@ -12,6 +12,9 @@ from sklearn.metrics import accuracy_score
 
 le = LabelEncoder()
 
+def string_to_datetime(date_string) :
+	date_time = datetime.strptime(date_string, '%y%m/%d %H:%M:%S')
+	return date_time.Ticks
 '''
 upload_1 = pd.read_csv(r'C:\PY\Data\91APP_MemberData.csv', low_memory = False)
 
@@ -38,9 +41,13 @@ print('Successfully read in file : C:\PY\Data\91APP_OrderData.csv ...')
 df_2 = df_2.drop('UnifiedUserId', axis = 1)
 df_2 = df_2.drop('MemberId', axis = 1)
 df_2 = df_2.drop('TradesGroupCode', axis = 1)
-df_2 = df_2.drop('OrderDateTime', axis = 1)
+# df_2 = df_2.drop('OrderDateTime', axis = 1)
+
+print(string_to_datetime(str(df_2['OrderDateTime'])))
+'''
 
 print('Successfully dropped columns ...')
+print(df_2.columns.values)
 
 df_2['ChannelType'] = le.fit_transform(df_2['ChannelType'])
 df_2['ChannelDetail'] = le.fit_transform(df_2['ChannelDetail'])
@@ -55,9 +62,10 @@ lens = len(df_2.index)
 x_train = df_2.drop('StatusDef', axis = 1)
 y_train = df_2['StatusDef']
 
-x_train = x_train.drop(df_2.index[int(round(lens/2, 0)) : lens])
-y_train = y_train.drop(df_2.index[int(round(lens/2, 0)) : lens])
-x_test = df_2.drop(df_2.index[ : int(round(lens/2, 0))])
+x_train = x_train.drop(df_2.index[int(round(2 * lens / 3, 0)) : lens])
+y_train = y_train.drop(df_2.index[int(round(2 * lens / 3, 0)) : lens])
+x_test = df_2.drop(df_2.index[ : int(round(2 * lens / 3, 0))])
+y_test = x_test['StatusDef']
 x_test = x_test.drop('StatusDef', axis = 1)
 
 print('Successfully splitted train data & test data ...')
@@ -65,10 +73,12 @@ print('Successfully splitted train data & test data ...')
 randomForestModel = RandomForestClassifier(n_estimators = 100, criterion = 'gini')
 randomForestModel.fit(x_train, y_train)
 
-print('Model Fitted')
+print('Model Fitted ...')
 
-y_pred = randomForestModel.predict(x_test)
+pred = randomForestModel.predict(x_train)
 
-randomForestModel.score(x_train, y_train)
-score = round(randomForestModel.score(x_train, y_train) * 100, 2)
-print(score)
+print(round(randomForestModel.score(x_train, y_train) * 100, 2))
+print(round(randomForestModel.score(x_test, y_test) * 100, 2))
+print(randomForestModel.feature_importances_)
+
+'''
