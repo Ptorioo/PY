@@ -155,3 +155,4 @@ pred = randomForestModel.predict(x_train)
 
 print(round(randomForestModel.score(x_train, y_train) * 100, 2))
 print(round(randomForestModel.score(x_test, y_test) * 100, 2))
+
