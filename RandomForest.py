@@ -8,6 +8,7 @@ from datetime import datetime, date
 from sklearn.preprocessing import LabelEncoder
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
+import matplotlib.pyplot as plt
 
 def rem_time(d):
     s = ''
@@ -29,7 +30,8 @@ def string_to_days_from_now2(date_string) :
 		date_time = datetime.strptime(date_string, '%Y/%m/%d')
 		now = datetime(2022, 12, 10)
 		subtract = now - date_time
-		return subtract.days / 365
+		age_ = float(subtract.days / 365)
+		return age_
 	except : 
 		return 0
 
@@ -128,8 +130,15 @@ df['CountryAliasCode'] = le.fit_transform(df['CountryAliasCode'])
 print('Successfully encoded dataframe ...')
 
 df['Birthday'] = df['Birthday'].replace(0, np.NaN)
-bd = df['Birthday'].mean()
-df['Birthday'] = df['Birthday'].fillna(bd)
+mean = df['Birthday'].mean()
+std = df['Birthday'].std()
+is_null = df['Birthday'].isnull().sum()
+rand_age = np.random.uniform(mean - std, mean + std, size = is_null)
+age_slice = df['Birthday'].copy()
+age_slice[np.isnan(age_slice)] = rand_age
+df['Birthday'] = age_slice
+
+print(df['Birthday'])
 
 print('Successfully processed birthday')
 
@@ -156,3 +165,16 @@ pred = randomForestModel.predict(x_train)
 print(round(randomForestModel.score(x_train, y_train) * 100, 2))
 print(round(randomForestModel.score(x_test, y_test) * 100, 2))
 
+features = list(df.columns.values)
+features.remove("StatusDef")
+
+importances = list(randomForestModel.feature_importances_)
+
+print("Creating figure ...")
+fig = plt.figure(figsize=(42,14))
+plt.rcParams.update({"font.size":24})
+plt.barh(features, importances, color='blue')
+plt.xlabel("Features", fontsize = 32)
+plt.ylabel("Importance", fontsize = 32)
+plt.title("Feature importance", fontsize = 48)
+plt.savefig("importance.png")
