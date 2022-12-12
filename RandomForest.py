@@ -18,10 +18,10 @@ def rem_time(d):
 def string_to_days_from_now(date_string) :
 	try :
 		date_time = datetime.strptime(date_string, '%Y/%m/%d %H:%M')
-		date_time = datetime.strptime(rem_time(date_time), '%Y/%m/%d')
-		now = datetime(2022, 12, 10)
-		subtract = now - date_time
-		return subtract.days
+		# date_time = datetime.strptime(rem_time(date_time), '%Y/%m/%d')
+		# now = datetime(2022, 12, 10)
+		# subtract = now - date_time
+		return date_time.hour
 	except :
 		return 0
 
@@ -138,7 +138,7 @@ age_slice = df['Birthday'].copy()
 age_slice[np.isnan(age_slice)] = rand_age
 df['Birthday'] = age_slice
 
-print(df['Birthday'])
+print(df['OrderDateTime'])
 
 print('Successfully processed birthday')
 
